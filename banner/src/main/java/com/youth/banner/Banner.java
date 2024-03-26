@@ -1,11 +1,12 @@
 package com.youth.banner;
 
+import static java.lang.annotation.RetentionPolicy.SOURCE;
+
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.PaintFlagsDrawFilter;
 import android.graphics.Path;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
@@ -38,17 +39,14 @@ import com.youth.banner.listener.OnBannerListener;
 import com.youth.banner.listener.OnPageChangeListener;
 import com.youth.banner.transformer.MZScaleInTransformer;
 import com.youth.banner.transformer.ScaleInTransformer;
+import com.youth.banner.util.BannerLifecycleObserver;
 import com.youth.banner.util.BannerLifecycleObserverAdapter;
 import com.youth.banner.util.BannerUtils;
-import com.youth.banner.util.BannerLifecycleObserver;
-import com.youth.banner.util.LogUtils;
 import com.youth.banner.util.ScrollSpeedManger;
 
 import java.lang.annotation.Retention;
 import java.lang.ref.WeakReference;
 import java.util.List;
-
-import static java.lang.annotation.RetentionPolicy.SOURCE;
 
 
 public class Banner<T, BA extends BannerAdapter<T, ? extends RecyclerView.ViewHolder>> extends FrameLayout implements BannerLifecycleObserver {
@@ -109,7 +107,7 @@ public class Banner<T, BA extends BannerAdapter<T, ? extends RecyclerView.ViewHo
     private Paint mImagePaint;
 
     @Retention(SOURCE)
-    @IntDef( {HORIZONTAL, VERTICAL})
+    @IntDef({HORIZONTAL, VERTICAL})
     public @interface Orientation {
     }
 
@@ -249,7 +247,7 @@ public class Banner<T, BA extends BannerAdapter<T, ? extends RecyclerView.ViewHo
                 float endY = event.getY();
                 float distanceX = Math.abs(endX - mStartX);
                 float distanceY = Math.abs(endY - mStartY);
-                if (getViewPager2().getOrientation() == HORIZONTAL) {
+                if (getViewPager2().getOrientation() == ViewPager2.ORIENTATION_HORIZONTAL) {
                     mIsViewPager2Drag = distanceX > mTouchSlop && distanceX > distanceY;
                 } else {
                     mIsViewPager2Drag = distanceY > mTouchSlop && distanceY > distanceX;
@@ -537,6 +535,7 @@ public class Banner<T, BA extends BannerAdapter<T, ? extends RecyclerView.ViewHo
 
     /**
      * 是否要拦截事件
+     *
      * @param intercept
      * @return
      */
@@ -547,6 +546,7 @@ public class Banner<T, BA extends BannerAdapter<T, ? extends RecyclerView.ViewHo
 
     /**
      * 跳转到指定位置（最好在设置了数据后在调用，不然没有意义）
+     *
      * @param position
      * @return
      */
@@ -556,6 +556,7 @@ public class Banner<T, BA extends BannerAdapter<T, ? extends RecyclerView.ViewHo
 
     /**
      * 跳转到指定位置（最好在设置了数据后在调用，不然没有意义）
+     *
      * @param position
      * @param smoothScroll
      * @return
@@ -720,12 +721,13 @@ public class Banner<T, BA extends BannerAdapter<T, ? extends RecyclerView.ViewHo
 
     /**
      * 设置banner的适配器
+     *
      * @param adapter
      * @param isInfiniteLoop 是否支持无限循环
      * @return
      */
-    public Banner setAdapter(BA adapter,boolean isInfiniteLoop) {
-        mIsInfiniteLoop=isInfiniteLoop;
+    public Banner setAdapter(BA adapter, boolean isInfiniteLoop) {
+        mIsInfiniteLoop = isInfiniteLoop;
         setInfiniteLoop();
         setAdapter(adapter);
         return this;
@@ -825,7 +827,7 @@ public class Banner<T, BA extends BannerAdapter<T, ? extends RecyclerView.ViewHo
      * @param pageMargin     页面间距,单位dp
      */
     public Banner setBannerGalleryEffect(int leftItemWidth, int rightItemWidth, int pageMargin) {
-        return setBannerGalleryEffect(leftItemWidth,rightItemWidth, pageMargin, .85f);
+        return setBannerGalleryEffect(leftItemWidth, rightItemWidth, pageMargin, .85f);
     }
 
     /**
@@ -858,6 +860,21 @@ public class Banner<T, BA extends BannerAdapter<T, ? extends RecyclerView.ViewHo
                 rightItemWidth > 0 ? BannerUtils.dp2px(rightItemWidth + pageMargin) : 0);
         return this;
     }
+
+    /**
+     * 这个方法是用来实现中间图片在前面，两边图片在后面的效果
+     */
+//    public Banner setBannerGalleryEffect(int leftItemWidth, int rightItemWidth, int pageMargin, float scale) {
+//
+//        addPageTransformer(new MarginPageTransformer());
+//
+//        if (scale < 1 && scale > 0) {
+//            addPageTransformer(new ScaleInTransformer(scale));
+//        }
+//        setRecyclerViewPadding(leftItemWidth > 0 ? BannerUtils.dp2px(leftItemWidth + pageMargin) : 0,
+//                rightItemWidth > 0 ? BannerUtils.dp2px(rightItemWidth + pageMargin) : 0);
+//        return this;
+//    }
 
     /**
      * 为banner添加魅族效果
